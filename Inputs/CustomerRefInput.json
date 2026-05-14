@@ -1,0 +1,21 @@
+{
+    "Name": "CustomerRefInput",
+    "Type": "Data Stream",
+    "DataSourceType": "Event Hub",
+    "EventHubProperties": {
+        "ServiceBusNamespace": "itri613",
+        "EventHubName": "customer-ref-hub",
+        "SharedAccessPolicyName": "itri613-asa-job_CustomerRefInput_policy",
+        "SharedAccessPolicyKey": "********",
+        "ConsumerGroupName": "itri613-asa-job_CustomerRefInput_consumer_group",
+        "AuthenticationMode": "ConnectionString"
+    },
+    "DataSourceCredentialDomain": "4a5860a3-098f-4f5d-8eb1-a0492029e730.StreamAnalystics",
+    "Serialization": {
+        "Type": "Json",
+        "Encoding": "UTF8"
+    },
+    "PartitionKey": "",
+    "CompressionType": "None",
+    "ScriptType": "Input"
+}

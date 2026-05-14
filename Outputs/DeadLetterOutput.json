@@ -1,0 +1,14 @@
+{
+    "Name": "DeadLetterOutput",
+    "DataSourceType": "DocumentDB",
+    "DocumentDbProperties": {
+        "AccountId": "itri613-cosmos",
+        "AccountKey": "********",
+        "Database": "ECommerceAnalytics",
+        "ContainerName": "dead-letter",
+        "DocumentId": "event_id",
+        "AuthenticationMode": "ConnectionString"
+    },
+    "DataSourceCredentialDomain": "27aa2821-f4c6-46b3-a604-c351e24b22f7.StreamAnalystics",
+    "ScriptType": "Output"
+}

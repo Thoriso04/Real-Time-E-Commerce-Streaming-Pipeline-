@@ -1,0 +1,16 @@
+{
+    "Name": "SQLOutput",
+    "DataSourceType": "SQL Database",
+    "SQLDatabaseProperties": {
+        "Database": "itri613-sqldb",
+        "Server": "itri613-sqlserver",
+        "User": "itri613admin",
+        "Password": null,
+        "Table": "[dbo].[CategoryMetrics]",
+        "MaxWriterCount": 1,
+        "MaxBatchCount": 10000,
+        "AuthenticationMode": "ConnectionString"
+    },
+    "DataSourceCredentialDomain": null,
+    "ScriptType": "Output"
+}

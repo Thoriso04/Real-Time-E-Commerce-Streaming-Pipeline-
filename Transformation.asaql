@@ -1,0 +1,160 @@
+WITH CleanClickstream AS (
+    SELECT
+        event_id,
+        event_type,
+        user_id,
+        product_id,
+        product_name,
+        category,
+        price,
+        action,
+        session_id,
+        event_time
+    FROM ClickstreamInput
+    TIMESTAMP BY CAST(event_time AS datetime)
+    WHERE event_id IS NOT NULL
+      AND price >= 0
+      AND price <= 100000
+),
+
+EnrichedEvents AS (
+    SELECT
+        c.event_id,
+        c.event_type,
+        c.user_id,
+        c.product_id,
+        c.product_name,
+        c.category,
+        c.price,
+        c.action,
+        c.session_id,
+        c.event_time,
+        cr.segment AS customer_segment,
+        cr.lifetime_value,
+        System.Timestamp() AS processing_time
+    FROM CleanClickstream c
+    LEFT JOIN CustomerRefInput cr
+        ON c.user_id = cr.user_id
+        AND DATEDIFF(second, c, cr) BETWEEN -300 AND 300
+)
+
+
+SELECT
+    CAST(event_id AS nvarchar(max)) AS id,
+    ISNULL(user_id, 'UNKNOWN_USER') AS user_id,
+    event_id,
+    'INVALID_SCHEMA' AS error_reason,
+    CASE
+        WHEN event_id IS NULL THEN 'Missing event_id field'
+        WHEN price < 0 THEN CONCAT('Negative price: ', CAST(price AS nvarchar(max)))
+        WHEN price > 100000 THEN CONCAT('Price exceeds R100k limit: ', CAST(price AS nvarchar(max)))
+        ELSE 'Unknown validation error'
+    END AS error_details,
+    event_time,
+    System.Timestamp() AS processing_time,
+    price,
+    action
+INTO DeadLetterOutput
+FROM ClickstreamInput
+TIMESTAMP BY CAST(event_time AS datetime)
+WHERE event_id IS NULL OR price < 0 OR price > 100000;
+
+
+
+SELECT
+    event_id,
+    event_type,
+    user_id,
+    product_id,
+    product_name,
+    category,
+    price,
+    action,
+    session_id,
+    event_time,
+    customer_segment,
+    lifetime_value,
+    processing_time
+INTO ClickstreamOutput
+FROM EnrichedEvents;
+
+
+
+SELECT
+    event_id,
+    user_id,
+    product_id,
+    category,
+    price,
+    action,
+    event_time,
+    customer_segment,
+    processing_time,
+
+    CASE
+        WHEN customer_segment = 'high_value'
+             AND price > 3000
+             AND action = 'remove_from_cart'
+            THEN 'HIGH_VALUE_ABANDONMENT_RISK'
+
+        WHEN customer_segment = 'new'
+             AND action = 'purchase'
+            THEN 'NEW_CUSTOMER_WELCOME_OPPORTUNITY'
+
+        WHEN customer_segment = 'at_risk'
+             AND price > 2000
+             AND action = 'view'
+            THEN 'AT_RISK_RETENTION_TARGET'
+
+        ELSE 'STANDARD_EVENT'
+    END AS insight_type,
+
+    CASE
+        WHEN customer_segment = 'high_value'
+             AND price > 3000
+             AND action = 'remove_from_cart'
+        THEN CONCAT(
+            'URGENT: High-value customer ',
+            user_id,
+            ' removed R',
+            CAST(price AS nvarchar(max)),
+            ' item'
+        )
+        ELSE NULL
+    END AS actionable_message
+
+INTO PersonalizationOutput
+FROM EnrichedEvents;
+
+
+
+SELECT
+    event_id,
+    user_id,
+    price,
+    event_time,
+    customer_segment,
+    System.Timestamp() AS processing_time,
+
+    CASE
+        WHEN customer_segment = 'high_value'
+             AND price > 2000
+            THEN 'CRITICAL_FOLLOWUP_NOW'
+        ELSE 'STANDARD_FOLLOWUP'
+    END AS priority_level
+
+INTO AbandonmentOutput
+FROM EnrichedEvents
+WHERE action = 'add_to_cart';
+
+
+
+SELECT
+    System.Timestamp() AS window_end,
+    category,
+    COUNT(*) AS total_events,
+    SUM(CASE WHEN action = 'purchase' THEN price ELSE 0 END) AS revenue_zar,
+    COUNT(DISTINCT user_id) AS unique_users
+INTO SQLOutput
+FROM CleanClickstream
+GROUP BY category, TumblingWindow(minute, 5);

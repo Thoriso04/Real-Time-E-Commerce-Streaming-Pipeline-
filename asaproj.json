@@ -1,0 +1,38 @@
+{
+    "name": "itri613-asa-job",
+    "startFile": "Transformation.asaql",
+    "configurations": [
+        {
+            "filePath": "JobConfig.json",
+            "subType": "JobConfig"
+        },
+        {
+            "filePath": "Outputs/SQLOutput.json",
+            "subType": "Output"
+        },
+        {
+            "filePath": "Outputs/DeadLetterOutput.json",
+            "subType": "Output"
+        },
+        {
+            "filePath": "Outputs/AbandonmentOutput.json",
+            "subType": "Output"
+        },
+        {
+            "filePath": "Outputs/ClickstreamOutput.json",
+            "subType": "Output"
+        },
+        {
+            "filePath": "Outputs/PersonalizationOutput.json",
+            "subType": "Output"
+        },
+        {
+            "filePath": "Inputs/ClickstreamInput.json",
+            "subType": "Input"
+        },
+        {
+            "filePath": "Inputs/CustomerRefInput.json",
+            "subType": "Input"
+        }
+    ]
+}

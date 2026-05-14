@@ -1,0 +1,14 @@
+{
+    "Name": "ClickstreamOutput",
+    "DataSourceType": "DocumentDB",
+    "DocumentDbProperties": {
+        "AccountId": "itri613-cosmos",
+        "AccountKey": "********",
+        "Database": "ECommerceAnalytics",
+        "ContainerName": "clickstream-events",
+        "DocumentId": "event_id",
+        "AuthenticationMode": "ConnectionString"
+    },
+    "DataSourceCredentialDomain": "dbb9dfd9-1aa8-4207-ba1c-3cfc998ac050.StreamAnalystics",
+    "ScriptType": "Output"
+}

@@ -1,0 +1,14 @@
+{
+    "Name": "AbandonmentOutput",
+    "DataSourceType": "DocumentDB",
+    "DocumentDbProperties": {
+        "AccountId": "itri613-cosmos",
+        "AccountKey": "********",
+        "Database": "ECommerceAnalytics",
+        "ContainerName": "cart-abandonments",
+        "DocumentId": "event_id",
+        "AuthenticationMode": "ConnectionString"
+    },
+    "DataSourceCredentialDomain": "0abdd06b-6e4e-404c-9eaa-ff6e7a0dc1a8.StreamAnalystics",
+    "ScriptType": "Output"
+}

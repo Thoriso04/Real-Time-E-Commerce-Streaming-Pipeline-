@@ -1,0 +1,14 @@
+{
+    "Name": "PersonalizationOutput",
+    "DataSourceType": "DocumentDB",
+    "DocumentDbProperties": {
+        "AccountId": "itri613-cosmos",
+        "AccountKey": "********",
+        "Database": "ECommerceAnalytics",
+        "ContainerName": "personalization-insights",
+        "DocumentId": "event_id",
+        "AuthenticationMode": "ConnectionString"
+    },
+    "DataSourceCredentialDomain": "e8ab7d24-1a8d-406c-b59e-b749f6164f45.StreamAnalystics",
+    "ScriptType": "Output"
+}
